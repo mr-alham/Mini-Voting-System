@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include <ctype.h> // For string formatting
 
 // # COMMON section
@@ -47,13 +48,13 @@ void displayNames(int number, char names[][20])
 
     if (number < 1)
     {
-        printf("No candidates to display\n");
+        printf("\nNo candidates to display\n");
         return;
     }
 
     for (int i = 0; i < number; i++)
     {
-        printf("0%d. %s\n", i + 1, names[i]);
+        printf("    [%d] %s\n", i + 1, names[i]);
     }
 
     return;
@@ -79,6 +80,8 @@ void removeCandidate()
 {
     int toDelete;
 
+    printf("\nRemove Candidate\n");
+
     if (numberOfCandidates == 0)
     {
         printf("\nERROR - No candidates to remove\n");
@@ -87,7 +90,7 @@ void removeCandidate()
 
     displayNames(numberOfCandidates, candidateNames);
 
-    printf("Enter the number of the candidate to remove: ");
+    printf("[ ] Enter candidate ID to remove: ");
 
     if (scanf("%d", &toDelete) != 1)
     {
@@ -119,9 +122,9 @@ void removeCandidate()
 
     numberOfCandidates--;
 
-    printf("Candidate removed successfully\n");
+    printf("\nCandidate removed successfully\n");
 
-    removeCandidate();
+    // removeCandidate();
 
     return;
 }
@@ -129,7 +132,9 @@ void removeCandidate()
 // add candidates
 void addCandidate()
 {
-    printf("DEBUG: Add candidate\n");
+    // printf("DEBUG: Add candidate\n");
+
+    printf("\nAdd Candidate\n");
 
     if (numberOfCandidates >= 10) // Because we can only add 10 candidates
     {
@@ -154,7 +159,7 @@ void addCandidate()
 
 void manageCandidates()
 {
-    printf("    [1] View candidates\n    [2] Add candidate\n    [3] Remove candidate\n    [4] Go to main menu\n    [0] Exit\nEnter your choice: ");
+    printf("\nManage Candidates\n    [1] View candidates\n    [2] Add candidate\n    [3] Remove candidate\n    [4] Go to main menu\n    [0] Exit\n[ ] Enter your choice: ");
 
     if (scanf("%d", &choice) != 1)
     {
@@ -171,7 +176,7 @@ void manageCandidates()
     while (getchar() != '\n')
         ; // Clear the input buffer to avoid issues with fgets
 
-    if (choice < 1 || choice > 5)
+    if (choice < 0 || choice > 5)
     {
         printf("\nERROR - Invalid input: Out of range.\n");
 
@@ -183,28 +188,30 @@ void manageCandidates()
     switch (choice)
     {
     case 1:
+        printf("\nCandidates\n");
         displayNames(numberOfCandidates, candidateNames);
         manageCandidates();
         break;
+
     case 2:
         addCandidate();
         manageCandidates();
         break;
+
     case 3:
         removeCandidate();
         manageCandidates();
         break;
+
     case 4:
+        // TODO: change this to where default options are shown
         main();
         manageCandidates();
-        // TODO: change this to where default options are shown
         break;
-        main();
-        manageCandidates();
-        // TODO: change this to where default options are shown
 
     case 0:
-        printf("Exiting...\n");
+        printf("\nExiting...\n");
+        exit(0);
         break;
     }
 }
