@@ -1,6 +1,8 @@
 # Mini-Voting-System
 
+### App Template
 
+```
 [0] Vote (Voter)
     [0] Cast the vote
         [0] Enter your Student ID           *if S. ID is in the system proceed
@@ -12,9 +14,9 @@
 
 [1] Admin
     [0] Manage Candidates
-        [0] Add candidates ($done)
-        [1] Remove candidates ($done)              *Show candidates added to system to remove
-        [2] View candidates ($done)
+        [0] Add candidates ($done coding)
+        [1] Remove candidates ($done coding)              *Show candidates added to system to remove
+        [2] View candidates ($done coding)
         [3] Go to main menu
 
     [1] Manage Voters
@@ -29,3 +31,4 @@
 
 [2] Help  *optional
 [3] Exit
+```
