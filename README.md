@@ -13,17 +13,17 @@
     [1] Go to main menu
 
 [1] Admin
-    [0] Manage Candidates
+    [0] Manage Candidates ($done coding)
         [0] Add candidates ($done coding)
         [1] Remove candidates ($done coding)              *Show candidates added to system to remove
         [2] View candidates ($done coding)
-        [3] Go to main menu
+        [3] Go to main menu ($done coding)
 
-    [1] Manage Voters
-        [0] Add voters
-        [1] Remove voters                  *Show voters added to system to remove
-        [2] View voters
-        [3] Go to main menu
+    [1] Manage Voters ($done)
+        [0] Add voters ($done)
+        [1] Remove voters ($done)                  *Show voters added to system to remove
+        [2] View voters ($done)
+        [3] Go to main menu ($done)
 
     [2] View results
 
@@ -32,3 +32,6 @@
 [2] Help  *optional
 [3] Exit
 ```
+
+### TODO:
+* show removed voter/candidate name, when showing removed successful message.
