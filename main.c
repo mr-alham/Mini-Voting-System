@@ -33,7 +33,7 @@ void removeNewLine(char *str) {
 // display the names with the index
 void displayNames(int number, char names[][20]) {
     if (number < 1) {
-        // printf("\nNo candidates to display\n");
+        printf("\n    - Not registered anyone yet!\n");
         return;
     }
 
@@ -117,18 +117,29 @@ void addCandidate() {
     }
 
     char name[20];
-    printf("Enter the name of the candidate: ");
+    printf("Enter the name of the candidate or press enter to go back: ");
     // scanf("%s", name);
     fgets(name, 20, stdin);
+
+    if (name[0] == '\n') {
+        return;
+    }
 
     removeNewLine(name);
 
     capitalize(name);
 
     strcpy(candidateNames[registeredCandidates++], name);
+
     printf("Candidate \'%s\' added successfully\n");
 
-    manageCandidates();
+    // while (getchar() != '\n');
+    if (strlen(name) == sizeof(name) - 1 && name[strlen(name) - 1] != '\n') {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF);  // Clear the input buffer
+    }
+
+    addCandidate();
 }
 
 // manage candidates
@@ -208,6 +219,11 @@ void addVoter() {
 
         strcpy(voterNames[registeredVoters++], name);
         printf("Voter \'%s\' added successfully\n");
+
+        if (strlen(name) == sizeof(name) - 1 && name[strlen(name) - 1] != '\n') {
+            int c;
+            while ((c = getchar()) != '\n' && c != EOF);  // Clear the input buffer
+        }
     }
 
     if (registeredVoters >= totalNumOfVoters) {
