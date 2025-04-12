@@ -8,9 +8,26 @@ int lenStr;
 char tmpStr[20];
 int choice;
 
-void manageCandidates();  // In C we have to declare the function before calling, So this will help to avoid that (called function prototype)
-void manageVoters();
+#define maxNumOfCandidates 10  // To keep track of total number of candidates
+#define maxNumOfVoters 40      // To keep track of total number of voters
+
+// voter
+int registeredVoters = 0;             // To keep track of number of voters
+int voteCount[maxNumOfCandidates];    // To keep track of votes for each candidate
+char voterNames[maxNumOfVoters][20];  // Can add 40 voters with 20 characters each
+
+// candidate
+int registeredCandidates = 0;                 // To keep track of number of candidates
+char candidateNames[maxNumOfCandidates][20];  // Can add 10 candidates with 20 characters each
+int numOfVotes[maxNumOfCandidates];           // To keep track of votes for each candidate
+
+// In C we have to declare the function before calling, So this will help to avoid that (called function prototype)
 int main();
+void admin();
+void mainMenu();
+void viewResults();
+void manageVoters();
+void manageCandidates();
 
 // Capitalize the first letter of the string
 void capitalize(char *str) {
@@ -44,19 +61,117 @@ void displayNames(int number, char names[][20]) {
     return;
 }
 
-// # VOTERS section
+// #VOTERS section
 void castVote() {
-    printf("DEBUG: Vote casted\n");
+    // printf("DEBUG: Vote casted\n");
+    char studentID[20];
+
+    printf("\nCast your Vote\n");
+    printf("Enter your Student ID to proceed Or press enter to go back: ");
+    fgets(studentID, sizeof(studentID), stdin);
+
+    if (studentID[0] == '\n') {
+        mainMenu();
+        return;
+    }
+
+    removeNewLine(studentID);
+    capitalize(studentID);
+
+    // TODO: Check if the student ID is valid and registered
+    // student ID should be unique for each voter
+    // student ID format: StdXXX where XXX is a number eg: Std005
+    // 005 means fifth name in the array in the voterNames
+
+    // if the student ID is valid
+
+    printf("\nCandidates\n");
+
+    displayNames(registeredCandidates, candidateNames);
+
+    printf("[ ] Enter candidate ID to vote Or press enter to go back: ");
+
+    fgets(tmpStr, sizeof(tmpStr), stdin);
+
+    // Exit if the user presses Enter without input
+    if (tmpStr[0] == '\n') {
+        mainMenu();
+        return;
+    }
+
+    // Convert input to integer
+    if (sscanf(tmpStr, "%d", &choice) != 1) {
+        printf("\nERROR - Invalid input: Not an integer.\n");
+        castVote();
+        return;
+    }
+
+    if (choice < 1 || choice > registeredCandidates) {
+        printf("\nInvalid input: Out of range.\n");
+
+        castVote();
+
+        return;
+    }
+
+    while (getchar() != '\n');
+
+    voteCount[choice - 1]++;
+
+    printf("\n\'%s\', Voted successfully for \'%s\'", studentID, candidateNames[choice - 1]);
+    printf("\nThank you for voting!\n");
+
+    castVote();
 }
 
+// Voters panel: where the voters can vote
 void voter() {
-    printf("DEBUG: Voter\n");
+    // TODO: can directly use castVote() instead of this function
+    // this will increase the complexity of the application
+    // printf("DEBUG: Voter\n");
+    printf("\nVoter's Panel\n    [1] Cast the Vote\n    [2] View Results\n    [3] Go to main menu\n    [0] Exit\n    [ ] Enter your choice: ");
+
+    if (scanf("%d", &choice) != 1) {
+        printf("\nERROR - Invalid input: Not an integer.\n");
+
+        while (getchar() != '\n');  // Important to prevent infinite loops
+
+        voter();
+
+        return;
+    }
+
+    while (getchar() != '\n');  // Clear the input buffer to avoid issues with fgets
+
+    switch (choice) {
+        case 1:
+            castVote();
+            // voter();
+            break;
+
+        case 2:
+            viewResults();
+            // voter();
+            castVote();
+            break;
+
+        case 3:
+            main();
+            // TODO: change this to where default options are shown
+            break;
+
+        case 0:
+            printf("\nExiting...\n");
+            exit(0);
+            break;
+        default:
+            printf("\nInvalid input: Out of range.\n");
+            // voter();
+            break;
+    }
 }
 
-// ADMIN section
-#define maxNumOfCandidates 10                 // To keep track of total number of candidates
-int registeredCandidates = 0;                 // To keep track of number of candidates
-char candidateNames[maxNumOfCandidates][20];  // Can add 10 candidates with 20 characters each
+// #ADMIN section
 
 // remove candidates
 void removeCandidate() {
@@ -144,7 +259,7 @@ void addCandidate() {
 
 // manage candidates
 void manageCandidates() {
-    printf("\nManage Candidates\n    [1] View candidates\n    [2] Add candidate\n    [3] Remove candidate\n    [4] Go to main menu\n    [0] Exit\n[ ] Enter your choice: ");
+    printf("\nManage Candidates\n    [1] View candidates\n    [2] Add candidate\n    [3] Remove candidate\n    [4] Go to main menu\n    [5] Go back\n    [0] Exit\n[ ] Enter your choice: ");
 
     if (scanf("%d", &choice) != 1) {
         printf("\nERROR - Invalid input: Not an integer.\n");
@@ -184,9 +299,13 @@ void manageCandidates() {
             break;
 
         case 4:
-            // TODO: change this to where default options are shown
-            main();
+            // DONE: change this to where default options are shown
+            // main();
+            mainMenu();
             manageCandidates();
+            break;
+        case 5:
+            admin();
             break;
 
         case 0:
@@ -196,15 +315,11 @@ void manageCandidates() {
     }
 }
 
-int registeredVoters = 0;               // To keep track of number of voters
-#define totalNumOfVoters 40             // To keep track of total number of voters
-char voterNames[totalNumOfVoters][20];  // Can add 40 voters with 20 characters each
-
 // add voters
 void addVoter() {
-    printf("\nAdd Voters\n");
+    printf("\nAdd Voters:");
 
-    while (registeredVoters < totalNumOfVoters) {
+    while (registeredVoters < maxNumOfVoters) {
         char name[20];
         printf("\nEnter the name of voter (or press Enter to stop): ");
         fgets(name, 20, stdin);
@@ -226,7 +341,7 @@ void addVoter() {
         }
     }
 
-    if (registeredVoters >= totalNumOfVoters) {
+    if (registeredVoters >= maxNumOfVoters) {
         printf("\nERROR!!! Maximum number of voters reached\n");
     }
 
@@ -291,8 +406,9 @@ void removeVoter() {
     return;
 }
 
+// in this function voters are managed by admin
 void manageVoters() {
-    printf("\nManage Voters\n    [1] View voters\n    [2] Add Voters\n    [3] Remove Voters\n    [4] Go to main menu\n    [0] Exit\n[ ] Enter your choice: ");
+    printf("\nManage Voters\n    [1] View voters\n    [2] Add Voters\n    [3] Remove Voters\n    [4] Go to main menu\n    [5] Go Back\n    [0] Exit\n[ ] Enter your choice: ");
 
     if (scanf("%d", &choice) != 1) {
         printf("\nERROR - Invalid input: Not an integer.\n");
@@ -332,10 +448,14 @@ void manageVoters() {
             break;
 
         case 4:
-            // TODO: change this to where default options are shown
-            main();
-            printf("suppose to be default main menu");
+            // DONE: change this to where default options are shown
+            // main();
+            mainMenu();
             manageCandidates();
+            break;
+
+        case 5:
+            admin();
             break;
 
         case 0:
@@ -345,22 +465,37 @@ void manageVoters() {
     }
 }
 
+// function to view the voting results
 void viewResults() {
+    // printf("\nDEBUG: View Results\n");
+    printf("\nVoting Results:\n");
+
+    if (registeredCandidates == 0) {
+        printf("\nNo candidates are registered to show results.\nContact Admin\n");
+        manageCandidates();
+    }
+
+    for (int i = 0; i < registeredCandidates; i++) {
+        printf("    %s: %d\n", candidateNames[i], voteCount[i]);
+    }
 }
 
+// reset votes
 void clearVotes() {
 }
 
+// admin panel
 void admin() {
-    printf("\nAdmin\n    [1] Manage Candidates\n    [2] Manage Voters\n    [3] View Results\n    [4] Clear Votes\n    [5] Go to main menu\n    [0] Exit\n[ ] Enter your choice: ");
+    printf("\nAdmin Panel\n    [1] Manage Candidates\n    [2] Manage Voters\n    [3] View Results\n    [4] Clear Votes\n    [5] Go to main menu\n    [0] Exit\n[ ] Enter your choice: ");
 
     if (scanf("%d", &choice) != 1) {
         printf("\nERROR - Invalid input: Not an integer.\n");
 
         while (getchar() != '\n');  // Important to prevent infinite loops
 
-        main();
-        // TODO: change this to where default options are shown
+        // main();
+        mainMenu();
+        // DONE: change this to where default options are shown
 
         return;
     }
@@ -370,8 +505,9 @@ void admin() {
     if (choice < 0 || choice > 6) {
         printf("\nERROR - Invalid input: Out of range.\n");
 
-        main();
-        // TODO: change this to where default options are shown
+        // main();
+        mainMenu();
+        // DONE: change this to where default options are shown
 
         return;
     }
@@ -379,35 +515,104 @@ void admin() {
     switch (choice) {
         case 1:
             manageCandidates();
-            main();
-            // TODO: change this to where default options are shown
+            // main();
+            mainMenu();
+            // DONE: change this to where default options are shown
             break;
 
         case 2:
             manageVoters();
-            main();
-            // TODO: change this to where default options are shown
+            // main();
+            mainMenu();
+            // DONE: change this to where default options are shown
 
             break;
 
         case 3:
             viewResults();
-            main();
-            // TODO: change this to where default options are shown
+            // main();
+            mainMenu();
+            // DONE: change this to where default options are shown
 
             break;
 
         case 4:
             clearVotes();
-            main();
-            // TODO: change this to where default options are shown
+            // main();
+            mainMenu();
+            // DONE: change this to where default options are shown
 
             break;
 
         case 5:
-            main();
-            // TODO: change this to where default options are shown
+            // main();
+            mainMenu();
+            // DONE: change this to where default options are shown
 
+        case 0:
+            printf("\nExiting...\n");
+            exit(0);
+            break;
+    }
+}
+
+// function to show the help menu
+void help() {
+    // TODO: update the help menu
+    printf("\nHelp Menu\n");
+    printf("This is a mini voting system.\n");
+    printf("You can vote for your favorite candidate.\n");
+    printf("You can also manage candidates and voters as an admin.\n");
+    printf("Press 0 to exit the program.\n");
+
+    mainMenu();
+}
+
+// The main menu of the program
+void mainMenu() {
+    printf("\nMain Menu\n");
+    printf("    [1] Vote\n    [2] Admin\n    [3] Help Menu\n    [0] Exit\n[ ] Enter your choice: ");
+
+    if (scanf("%d", &choice) != 1) {
+        printf("\nERROR - Invalid input: Not an integer.\n");
+
+        while (getchar() != '\n');  // Important to prevent infinite loops
+
+        mainMenu();
+
+        return;
+    }
+
+    while (getchar() != '\n');  // Clear the input buffer to avoid issues with fgets
+
+    if (choice < 0 || choice > 4) {
+        printf("\nERROR - Invalid input: Out of range.\n");
+
+        mainMenu();
+
+        return;
+    }
+
+    switch (choice) {
+        case 1:
+            if (registeredVoters <= 0) {
+                printf("\nNo registered voters to vote for \nContact admin\n");
+                mainMenu();
+            } else if (registeredCandidates <= 0) {
+                printf("\nNo registered candidates to vote for \nContact admin\n");
+                mainMenu();
+            }
+
+            // voter();
+            castVote();
+            break;
+
+        case 2:
+            admin();
+            break;
+
+        case 3:
+            help();
             break;
 
         case 0:
@@ -418,11 +623,16 @@ void admin() {
 }
 
 int main() {
+    // printf("\nMini Voting System\n");
+    printf("Welcome to the Mini Voting System");
     // addCandidate();
     // removeCandidate();
     // manageCandidates();
     // manageVoters();
-    admin();
+    // admin();
+    // voter();
+    mainMenu();
+
     // addVoter();
     // removeVoter();
     return 0;
