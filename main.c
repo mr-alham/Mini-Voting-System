@@ -565,7 +565,7 @@ void manageVoters() {
             printf("\n[~] Registered Voters:\n");
             displayNames(registeredVoters, voterNames);
 
-            printf("... Press Enter to continue ...\n");
+            printf("\n... Press Enter to continue ...\n");
 
             getchar();  // Wait for user feedback
             manageVoters();
@@ -730,7 +730,7 @@ void help() {
     printf("\nExamples:\n");
     printf("  - To vote, select option [1] from the main menu.\n");
 
-    printf("  - This is a group project written by Alham, Thahida, Nasweer and Safra\n");
+    printf("\nThis is a group project written by Alham, Thahida, Nasweer and Safra\n");
     printf("\n\n... Press Enter to continue ...\n");
 
     getchar();  // Wait for user feedback
